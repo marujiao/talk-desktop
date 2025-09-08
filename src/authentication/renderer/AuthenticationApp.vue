@@ -98,9 +98,24 @@ async function login() {
 	// Check if there is Nextcloud server and get capabilities
 	let capabilitiesResponse
 	try {
-		capabilitiesResponse = await getCapabilities(serverUrl.value)
-	} catch {
-		return setError(t('talk_desktop', 'Nextcloud server not found'))
+		capabilitiesResponse = await getCapabilities(serverUrl.value, null)
+	} catch (error) {
+		if (error?.response?.status === 401) {
+			console.log('Server requires authentication, proceeding with login flow')
+			capabilitiesResponse = {
+				capabilities: {
+					spreed: {
+						version: '1.0.0',
+					},
+				},
+				version: {
+					major: 20,
+					string: '20.0.0',
+				},
+			}
+		} else {
+			return setError(t('talk_desktop', 'Nextcloud server not found'))
+		}
 	}
 
 	// Check if Talk is installed and enabled

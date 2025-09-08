@@ -16,13 +16,23 @@ import { generateOcsUrl } from '@nextcloud/router'
  *
  * @see https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-api-overview.html#capabilities-api
  * @param {string} serverUrl - Nextcloud server URL
+ * @param {object} [credentials] - User credentials for authentication
  * @return {Promise<import('axios').AxiosResponse>}
  */
-export async function getCapabilities(serverUrl) {
+export async function getCapabilities(serverUrl, credentials = null) {
+	const headers = {
+		'OCS-APIRequest': 'true',
+	}
+
+	// Add authentication header if credentials are provided
+	if (credentials && credentials.user && credentials.password) {
+		const authString = `${credentials.user}:${credentials.password}`
+		const encodedAuth = Buffer.from(authString).toString('base64')
+		headers.Authorization = `Basic ${encodedAuth}`
+	}
+
 	const response = await axios.get(generateOcsUrl('cloud/capabilities', {}, { baseURL: serverUrl }), {
-		headers: {
-			'OCS-APIRequest': 'true',
-		},
+		headers,
 	})
 	return response.data.ocs.data
 }
@@ -32,9 +42,21 @@ export async function getCapabilities(serverUrl) {
  *
  * @see TODO: ADD LINKS
  * @param {string} serverUrl - Nextcloud server URL
+ * @param {object} [credentials] - User credentials for authentication
  * @return {Promise<import('axios').AxiosResponse>}
  */
-export async function getCurrentUserData(serverUrl) {
-	const response = await axios.get(generateOcsUrl('cloud/user', {}, { baseURL: serverUrl }))
+export async function getCurrentUserData(serverUrl, credentials = null) {
+	const headers = {}
+
+	// Add authentication header if credentials are provided
+	if (credentials && credentials.user && credentials.password) {
+		const authString = `${credentials.user}:${credentials.password}`
+		const encodedAuth = Buffer.from(authString).toString('base64')
+		headers.Authorization = `Basic ${encodedAuth}`
+	}
+
+	const response = await axios.get(generateOcsUrl('cloud/user', {}, { baseURL: serverUrl }), {
+		headers,
+	})
 	return response.data.ocs.data
 }

@@ -16,8 +16,8 @@ import { getCapabilities, getCurrentUserData } from '../shared/ocs.service.js'
  */
 export async function refetchAppData(appData, persist = false) {
 	const [userMetadata, capabilitiesResponse] = await Promise.all([
-		getCurrentUserData(appData.serverUrl),
-		getCapabilities(appData.serverUrl),
+		getCurrentUserData(appData.serverUrl, appData.credentials),
+		getCapabilities(appData.serverUrl, appData.credentials),
 	])
 	const talkCapabilities = capabilitiesResponse.capabilities.spreed
 	appData.talkHash = null
