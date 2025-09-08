@@ -9,7 +9,7 @@ import type { UserStatusStatusType } from '../../UserStatus/userStatus.types.ts'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { storeToRefs } from 'pinia'
-import { ref, useTemplateRef, watch } from 'vue'
+import { computed, ref, useTemplateRef, watch } from 'vue'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcUserStatusIcon from '@nextcloud/vue/components/NcUserStatusIcon'
@@ -30,7 +30,7 @@ import { useUserStatusStore } from '../../UserStatus/userStatus.store.ts'
 import { availableUserStatusStatusTypes, userStatusTranslations } from '../../UserStatus/userStatus.utils.ts'
 
 // TODO: define a proper type for userMetadata
-const user = appData.userMetadata! as { id: string, 'display-name': string }
+const user = computed(() => appData.userMetadata as { id: string, 'display-name': string } | null)
 
 const userStatusStore = useUserStatusStore()
 const { userStatus } = storeToRefs(userStatusStore)
@@ -50,7 +50,7 @@ watch(isOpen, () => {
 	}
 })
 
-const userProfileLink = generateUrl('/u/{userid}', { userid: user.id })
+const userProfileLink = computed(() => user.value ? generateUrl('/u/{userid}', { userid: user.value.id }) : '')
 
 const logout = window.TALK_DESKTOP.logout
 const quit = window.TALK_DESKTOP.quit
@@ -79,6 +79,7 @@ function handleUserStatusChange(status: UserStatusStatusType) {
 				<div class="user-menu__trigger">
 					<!-- Floating-Vue doesn't support open on span[role=button] - opening manually -->
 					<NcAvatar
+						v-if="user"
 						class="user-menu__avatar"
 						:user="user.id"
 						:preloaded-user-status="userStatus"
@@ -122,6 +123,7 @@ function handleUserStatusChange(status: UserStatusStatusType) {
 
 					<template v-else>
 						<UiMenuItem
+							v-if="user"
 							tag="a"
 							:href="userProfileLink"
 							target="_blank">

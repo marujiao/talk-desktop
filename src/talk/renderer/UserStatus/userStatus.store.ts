@@ -44,7 +44,8 @@ export const useUserStatusStore = defineStore('userStatus', () => {
 	const isDnd = computed(() => userStatus.value?.status === 'dnd')
 
 	subscribe('user_status:status.updated', (newUserStatus) => {
-		if (newUserStatus.userId === getCurrentUser()!.uid) {
+		const currentUser = getCurrentUser()
+		if (currentUser && newUserStatus.userId === currentUser.uid) {
 			patchUserStatus(newUserStatus, false)
 		}
 	})

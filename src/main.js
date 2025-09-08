@@ -301,11 +301,14 @@ app.whenReady().then(async () => {
 
 	ipcMain.handle('talk:focus', async () => focusMainWindow())
 
-	ipcMain.handle('authentication:openLoginWebView', async (event, serverUrl) => openLoginWebView(mainWindow, serverUrl))
+	ipcMain.handle('authentication:openLoginWebView', async (event, serverUrl) => {
+		console.log('serverUrl', serverUrl)
+		openLoginWebView(mainWindow, serverUrl)
+	})
 
 	ipcMain.handle('authentication:login', async (event, newAppData) => {
 		appData.fromJSON(newAppData)
-		mainWindow.close()
+		mainWindow.close() 
 		mainWindow = createTalkWindow()
 		createMainWindow = createTalkWindow
 		mainWindow.once('ready-to-show', () => mainWindow.show())

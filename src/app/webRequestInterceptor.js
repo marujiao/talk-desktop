@@ -23,13 +23,19 @@ function enableWebRequestInterceptor(serverUrl, { credentials } = {}) {
 		},
 		(details, callback) => {
 			// TODO: For performance, only add Authorization header if there is no session Cookies
+			const requestHeaders = {
+				...details.requestHeaders,
+				Origin: new URL(serverUrl).origin,
+				'OCS-APIRequest': 'true',
+			}
+
+			// Only add Authorization header if credentials are provided
+			if (credentials && credentials.user && credentials.password) {
+				requestHeaders.Authorization = `Basic ${btoa(`${credentials.user}:${credentials.password}`)}`
+			}
+
 			callback({
-				requestHeaders: {
-					...details.requestHeaders,
-					Origin: new URL(serverUrl).origin,
-					Authorization: `Basic ${btoa(`${credentials.user}:${credentials.password}`)}`,
-					'OCS-APIRequest': 'true',
-				},
+				requestHeaders,
 			})
 		},
 	)

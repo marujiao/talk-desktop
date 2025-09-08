@@ -38,7 +38,7 @@ async function triggerNotification() {
 
 	const n = new Notification('Notification title', {
 		// FIXME: type appData
-		lang: (appData.userMetadata as unknown as { locale: string }).locale,
+		lang: (appData.userMetadata as unknown as { locale: string })?.locale || 'en',
 		body: 'Notification body: Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 		tag: Math.random().toString(36).slice(2),
 		silent: true,
@@ -51,7 +51,12 @@ async function triggerNotification() {
 
 async function requestTestAdminNotification() {
 	try {
-		await axios.post(generateOcsUrl('/apps/notifications/api/v3/admin_notifications/{uid}', { uid: getCurrentUser()!.uid }), {
+		const currentUser = getCurrentUser()
+		if (!currentUser) {
+			console.error('No current user found')
+			return
+		}
+		await axios.post(generateOcsUrl('/apps/notifications/api/v3/admin_notifications/{uid}', { uid: currentUser.uid }), {
 			subject: 'Test Push Notification',
 			message: 'This is a test push notification triggered by the Talk Desktop client',
 		})
@@ -89,7 +94,7 @@ function triggerCallbox() {
 		token: location.hash.slice('#/call/'.length),
 		name: 'Test Call Popup',
 		type: 'one2one',
-		avatar: generateUrl(`/avatar/${getCurrentUser()?.uid}/64`),
+		avatar: generateUrl(`/avatar/${getCurrentUser()?.uid || 'unknown'}/64`),
 		debug: 'true',
 	})
 }

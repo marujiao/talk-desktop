@@ -38,7 +38,12 @@ onBeforeMount(async () => {
  * Load the backup status
  */
 async function loadBackupStatus() {
-	backupStatus.value = await fetchBackupStatus(getCurrentUser()!.uid).catch(() => null)
+	const currentUser = getCurrentUser()
+	if (!currentUser) {
+		console.error('No current user found')
+		return
+	}
+	backupStatus.value = await fetchBackupStatus(currentUser.uid).catch(() => null)
 }
 </script>
 

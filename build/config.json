@@ -1,7 +1,7 @@
 {
 	"applicationName": "Nextcloud Talk",
-	"domain": null,
-	"enforceDomain": false,
+	"domain": "https://talk.clpsgroup.com.cn",
+	"enforceDomain": true,
 	"brandColor": "#0082C9",
 	"brandFontColor": "#FFFFFF",
 	"helpUrl": "https://nextcloud.com/talk/",

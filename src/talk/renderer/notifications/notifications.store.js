@@ -180,7 +180,7 @@ export function createNotificationStore() {
 		} else {
 			const n = new Notification(notification.subject, {
 				title: notification.subject,
-				lang: appData.userMetadata.locale,
+				lang: appData.userMetadata?.locale || 'en',
 				body: notification.message,
 				tag: notification.notificationId,
 				// We have a custom sound
@@ -212,7 +212,7 @@ export function createNotificationStore() {
 		console.timeEnd('debug:notification:test-push')
 		console.log('Test Notification Received', notification)
 		const n = new Notification(notification.subject, {
-			lang: appData.userMetadata.locale,
+			lang: appData.userMetadata?.locale || 'en',
 			body: notification.datetime,
 			tag: notification.notificationId,
 			icon: notification.icon,
@@ -413,7 +413,7 @@ subscribeBroadcast('notifications:missedCall', ({ token, name, type, avatar }) =
 		: t('talk_desktop', 'You missed a group call in {call}', { call: name })
 	const notification = new Notification(title, {
 		icon: avatar,
-		lang: appData.userMetadata.locale,
+		lang: appData.userMetadata?.locale || 'en',
 		tag: Math.random().toString(36).slice(2, 6),
 		silent: true,
 	})
